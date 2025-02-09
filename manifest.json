@@ -1,5 +1,5 @@
 {
-	"name": "vite-figma-plugin",
+	"name": "vite-components-plugin",
 	"id": "1470090650738359307",
 	"api": "1.0.0",
 	"main": "dist/code.js",

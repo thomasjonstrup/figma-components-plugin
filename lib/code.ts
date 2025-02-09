@@ -16,11 +16,10 @@ figma.showUI(__html__, {
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage = (msg: { type: string, count: number, nameFilter: string, typeFilter: string }) => {
-  console.log("🚀 ~ msg:", msg)
+figma.ui.onmessage = async (msg: { type: string, count: number, nameFilter: string, typeFilter: string }) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-shapes') {
+  if (msg.type === 'create-rectangles') {
     // This plugin creates rectangles on the screen.
     const numberOfRectangles = msg.count;
 
@@ -34,6 +33,10 @@ figma.ui.onmessage = (msg: { type: string, count: number, nameFilter: string, ty
     }
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
+  }
+
+  if (msg.type === 'load-pages') {
+    await figma.loadAllPagesAsync()
   }
 
   if (msg.type === 'filter-components') {
@@ -72,9 +75,10 @@ figma.ui.onmessage = (msg: { type: string, count: number, nameFilter: string, ty
       type: 'filter-result',
       count: components.length
     });
+    // Make sure to close the plugin when you're done. Otherwise the plugin will
+    // keep running, which shows the cancel button at the bottom of the screen.
+    figma.closePlugin();
   }
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+
 };

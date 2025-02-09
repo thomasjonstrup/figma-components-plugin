@@ -16,13 +16,23 @@ function App() {
     );
   }
 
-  const handleFilter = (): void => {
+  const handleFilter = async (): Promise<void> => {
     parent.postMessage(
-      { pluginMessage: { type: "filter-components", nameFilter, typeFilter } },
+      { pluginMessage: { type: "filter-components", nameFilter, typeFilter }},
+       "*",
     );
   }
 
   useEffect(() => {
+    const loadPages = async () => {
+      parent.postMessage(
+        { pluginMessage: { type: "load-pages" }},
+        "*",
+      );
+    }
+
+    loadPages();
+
     window.onmessage = (event) => {
       if (event.data.pluginMessage) {
         const { type, count } = event.data.pluginMessage;
@@ -30,11 +40,8 @@ function App() {
           setResult(`Found ${count} component(s)`)
         }
       }
-
-
     }
   }, [])
-
 
   return (
     <div className='container mx-auto p-10 space-y-4'>
